@@ -1,16 +1,25 @@
 # Copyright (c) 2017 Anne-Laure Ehresmann 
 # Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
-# version 0.0.1
+# version 1.0.1
 
 #### Guidelines ####
 
-# The first line is ignored: it is understood that it will be used for titling.
+# This script uses python3, and the package 'pandas'.
 
-# It is assumed that the sheet is in the following format: odd numbered cols are gene
-# symbols, even numbered cols are log_FC values.
+# It allows you to take multiple batch comparisons, and generates a file with a single row for each gene.
+# If a specific gene was in batch 1 but not in batch 2, a value of 'None' will be entered in the batch 2 column.
 
+# You can change what is written in case it is not found: change the value on line 66.
+
+# Call this script with: group_genes.py [filename].csv
+
+# The first line of your input file is ignored: it is understood that it will be used for titling.
+
+# It is assumed that the sheet is in the following format: odd numbered columns are gene
+# symbols, even numbered columns are log_FC (log fold change) values.
+
+ 
 import sys
-import math
 import pandas as pd
 
 def build_samples(data_file):
@@ -54,7 +63,7 @@ def process_line(vals, output):
             if (indexes[i] < len(samples[i]) - 1) & (vals[i] != "FinishedRow"):
                 indexes[i] += 1
         else:
-            newline.append("NaN")
+            newline.append("None")
     output.loc[len(output)] = newline
     return current
 
@@ -72,7 +81,6 @@ headers.append(list(samples[0])[0]) # add first gene name
 for i in range(0, len(samples)):
     headers.append(list(samples[i])[1])
 
-print(len(headers), headers)
 # empty dataframe to append to, with column headers built above
 output = pd.DataFrame(columns=headers)
 more = process_line(vals,output)
