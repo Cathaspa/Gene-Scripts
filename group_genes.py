@@ -1,23 +1,26 @@
-# Copyright (c) 2017 Anne-Laure Ehresmann 
-# Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
-# version 1.0.1
+'''
+Copyright (c) 2017 Anne-Laure Ehresmann 
+Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
+version 1.0.1
 
-#### Guidelines ####
+Guidelines
 
-# This script uses python3, and the package 'pandas'.
+This script uses python3, and the package "pandas".
 
-# It allows you to take multiple batch comparisons, and generates a file with a single row for each gene.
-# If a specific gene was in batch 1 but not in batch 2, a value of 'None' will be entered in the batch 2 column.
+It allows you to take multiple batch comparisons, and generates a file with a single row for each gene.
+If a specific gene was in batch 1 but not in batch 2, a value of "None" will be entered in the batch 2 column.
 
-# You can change what is written in case it is not found: change the value on line 66.
+You can change what is written in case it is not found: change the value on line 66.
 
-# Call this script with: group_genes.py [filename].csv
+You _must_ give an input sorted by gene names, otherwise the program will not correctly sift through the rows.
 
-# The first line of your input file is ignored: it is understood that it will be used for titling.
+Call this script with: group_genes.py [filename].csv
 
-# It is assumed that the sheet is in the following format: odd numbered columns are gene
-# symbols, even numbered columns are log_FC (log fold change) values.
+The first line of your input file is ignored: it is understood that it will be used for titling.
 
+It is assumed that the sheet is in the following format: odd numbered columns are gene
+symbols, even numbered columns are log_FC (log fold change) values.
+'''
  
 import sys
 import pandas as pd
