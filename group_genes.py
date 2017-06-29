@@ -12,8 +12,6 @@ If a specific gene was in batch 1 but not in batch 2, a value of "None" will be 
 
 You can change what is written in case it is not found: change the value on line 66.
 
-You _must_ give an input sorted by gene names, otherwise the program will not correctly sift through the rows.
-
 Call this script with: group_genes.py [filename].csv
 
 The first line of your input file is ignored: it is understood that it will be used for titling.
@@ -32,8 +30,8 @@ def build_samples(data_file):
     while i < len(list(headers)):
         sample = pd.read_csv(data_file, skipinitialspace=True, usecols = [i, i + 1])
         sample = sample.dropna() # removing NaN rows
-        finished = pd.DataFrame([["FinishedRow", 0]], columns = list(sample))
-        sample = sample.append(finished, ignore_index = True) # adding this to delimit the end of the column. Note: obviously, don't name a gene 'FinishedRow'.
+        finished = pd.DataFrame([["~~FinishedRow", 0]], columns = list(sample))
+        sample = sample.append(finished, ignore_index = True) # adding this to delimit the end of the column. Note: obviously, don't name a gene '~~FinishedRow'.
         samples.append(sample)
         i += 2
     return samples
@@ -70,11 +68,25 @@ def process_line(vals, output):
     output.loc[len(output)] = newline
     return current
 
-if (len(sys.argv) != 2):
+def capitalise(sample):
+    samp_series = sample.iloc[:,0]
+    samp_series = samp_series.str.capitalize()
+    return pd.concat([samp_series, sample.iloc[:,1]],axis=1)
+
+if (len(sys.argv) < 2):
     print("You must give me (at-least / only) one source file. Exiting.")
     sys.exit()
 
 samples = build_samples(sys.argv[1])
+
+if len(sys.argv) < 3 or (sys.argv[2] != 'y'):
+    print("Capitalising genes... Note that if your input file already contains only capital letters, and is sorted, you can pass 'y' after passing your input file to skip this step.")
+    for i in range(len(samples)):
+        samples[i] = capitalise(samples[i])
+    print("Sorting...")
+    for i in range(len(samples)):
+        samples[i] = samples[i].sort_values( [list(samples[i])[0]])
+
 indexes = build_indexes(len(samples))
 vals = build_indexes(len(samples))
 last_gene = get_last(samples)
@@ -88,11 +100,11 @@ for i in range(0, len(samples)):
 output = pd.DataFrame(columns=headers)
 more = process_line(vals,output)
 count = 0
-print("running....")
+print("Computing....")
 while more != last_gene:
-    count +=1
-    more = process_line(vals,output)
-    if( count%1000  == 0):
-        print("Computed %d rows..." % (count))
+     count +=1
+     more = process_line(vals,output)
+     if( count%1000  == 0):
+         print("Computed %d rows..." % (count))
 print("Done")  
 output.to_csv("output.csv", index=False)
