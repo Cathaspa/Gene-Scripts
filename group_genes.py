@@ -55,13 +55,13 @@ def process_line(vals, output):
     current = "~" # Same logic as in get_last() but reversed. '~' is one of the last characters.
     for i  in range(len(samples)):
         vals[i] = samples[i].iloc[indexes[i],0]
-        if (vals[i] < current) & (vals[i] != "FinishedRow"):
+        if (vals[i] < current) & (vals[i] != "~~FinishedRow"):
             current = vals[i]
     newline.append(current)
     for i in range(len(samples)):
         if current == vals[i]:
             newline.append( samples[i].iloc[indexes[i],1])
-            if (indexes[i] < len(samples[i]) - 1) & (vals[i] != "FinishedRow"):
+            if (indexes[i] < len(samples[i]) - 1) & (vals[i] != "~~FinishedRow"):
                 indexes[i] += 1
         else:
             newline.append("None")
