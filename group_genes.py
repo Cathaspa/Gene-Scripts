@@ -9,7 +9,7 @@ This script uses python3, and the package "pandas".
 
 It allows you to take multiple batch comparisons, and generates a file
 with a single row for each gene.
-If a specific gene was in batch 1 but not in batch 2, a value of "None"
+If a specific gene was in batch 1 but not in batch 2, a value of "null"
 will be entered in the batch 2 column.
 
 You can change what is written in case it is not found: change the
@@ -80,7 +80,7 @@ def process_line(vals, output):
                     vals[i] != "~~FinishedRow"):
                 indexes[i] += 1
         else:
-            newline.append("None")
+            newline.append("null")
     output.loc[len(output)] = newline
     return current
 
