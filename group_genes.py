@@ -9,11 +9,11 @@ This script uses python3, and the package "pandas".
 
 It allows you to take multiple batch comparisons, and generates a file
 with a single row for each gene.
-If a specific gene was in batch 1 but not in batch 2, a value of "null"
+If a specific gene was in batch 1 but not in batch 2, a value of "NaN"
 will be entered in the batch 2 column.
 
-You can change what is written in case it is not found: change the
-value on line 66.
+Do NOT change what is written in case it is not found: This breaks NaN
+detection in other scripts.
 
 Call this script with: group_genes.py [filename].csv
 
@@ -80,7 +80,7 @@ def process_line(vals, output):
                     vals[i] != "~~FinishedRow"):
                 indexes[i] += 1
         else:
-            newline.append("null")
+            newline.append("NaN")
     output.loc[len(output)] = newline
     return current
 
