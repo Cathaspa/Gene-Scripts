@@ -15,8 +15,6 @@ from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 
 def verify_inputs(inpt_arr, headers):
     cols = []
-    # print("headers: ", headers)
-    # print("inpt_arr", inpt_arr)
     if (len(inpt_arr) == 1) & (inpt_arr[0] == "end"):
         return "end"
     for inpt in inpt_arr:
@@ -70,7 +68,7 @@ def gen_index_array(data):
     while more:
         query = ("\nAsking for sample %d. Which " % (len(output)) +
                  "column(s) are in the sample? enter 'end' to stop " +
-                 "entering samples.\n>")
+                 "entering samples.\n> ")
         sample = ask_for(query, list(data))
         if sample == "end":
             more = False
@@ -86,42 +84,52 @@ def gen_index_array(data):
 def gen_graph_array(data, index_arr):
     output = []  # array of DataFrames
     for i in range(len(index_arr)):
-        col_arr = pd.DataFrame() 
+        sample_frame = pd.DataFrame() 
         for index in index_arr[i]:
-            col_arr[str(index)] = data.iloc[:,index].values
-        if len(col_arr.columns) > 1:  # if two or more cols have been given,
-            col_arr = col_arr.mean(axis = 1)  # get the mean
-        output.append(col_arr)
+            sample_frame[str(index)] = data.iloc[:,index].values
+        if len(sample_frame.columns) > 1:  # If two or more cols have been given,
+            sample_frame = sample_frame.mean(axis = 1)  # get the mean
+        output.append(sample_frame.squeeze())  # Append only series
     return output
 
-def gen_graphs(samples,gene_names):
+def gen_graphs(samples, gene_names):
     if len(samples) < 2:
         print("Something went wrong! E3")
-    control = np.array(samples[0].values).tolist()
-
-    for i in range(1, len(samples)):
-        sample = np.array(samples[i].values).tolist()
-        for j in range(len(control)):
-            if np.isnan(control[j]):
-                control[j] = "NA"
-            if np.isnan(sample[j]):
-                sample[j] == "NA"
-        print("len:",len(control),len(samples[i]))
-        print(control)
-        print(sample)
+        sys.exit()
+        
+    samples = remove_na_rows(samples, gene_names)
+    control = samples[1].tolist()
+    for i in range(2, len(samples)):
+        sample = samples[i].tolist()
+        print("s", sample, type(sample), "c", control, type(control))
         graph = go.Scatter(
             x=control,
             y=sample,
-            mode='markers')
+            mode='markers',
+            text = samples[0])
         layout = go.Layout(title=("Sample"))
-        fig = go.Figure(data=graph, layout=layout)
+        fig = go.Figure(data=[graph], layout=layout)
         plot_url = plot(fig, filename="Sample.html")
-    
+
+        
+def remove_na_rows(series_arr, gene_names):
+    na_frame = pd.DataFrame()
+    na_frame["names"] = gene_names
+    for i in range(len(series_arr)):
+        na_frame[str(i)] = pd.Series(series_arr[i])
+    na_frame = na_frame.dropna(axis=0, how = "any")
+    print(na_frame)
+    output = []
+    for i in range(len(na_frame.columns)):
+        output.append(na_frame.iloc[:,i].values)
+    return(output)
+         
+     
 if len(sys.argv) != 2:
     print("You must give me (at-least / only) one source file. Exiting.")
     sys.exit()
 
 data = pd.read_csv(sys.argv[1], skipinitialspace=True)
-print(np.array(data.iloc[:,0].values).tolist())
-graph_arr = gen_graph_array(data, gen_index_array(data))
+index_arr = gen_index_array(data)
+graph_arr = gen_graph_array(data, index_arr)
 gen_graphs(graph_arr, np.array(data.iloc[:,0].values).tolist())
