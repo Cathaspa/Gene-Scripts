@@ -1,6 +1,5 @@
 ''' Copyright (c) 2017 Anne-Laure Ehresmann
 Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
-version 0.0.1
 '''
 
 import sys
