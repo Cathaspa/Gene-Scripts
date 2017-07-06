@@ -12,9 +12,16 @@ your input.
 * numpy
 * plotly
 
+## Installation
+
+Clone the repository, and install the dependencies. Looking into [pip](https://pypi.python.org/pypi/pip) will make installing the python packages marginally easier.
+
+Once finished, you can call the script with:
+
+`python helix.py [options]`
 ## Usage
 
-#### Generating a file for the graphing utility
+### Generating a file for the graphing utility
 
 ##### `helix.py group <group_input>`
 
@@ -63,3 +70,8 @@ row for the series of columns given.
 ###### `[<sample> ...]`
 indicates that you can give more than one sample,
 simply separate each sample with a space.
+
+
+### Using both utilities
+##### `helix.py group <group_input> graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]`
+You can combine the two above utilities in one call with the above command. Since the grouping utility outputs a file named output.csv, make sure to use that as the name of your input file for the graphing utility.
