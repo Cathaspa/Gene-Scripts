@@ -9,9 +9,6 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
 
-
-#TODO: gen_graphs
-
 def verify_inputs(inpt_arr, headers):
     cols = []
     if (len(inpt_arr) == 1) & (inpt_arr[0] == "end"):
@@ -83,11 +80,14 @@ def gen_index_array(data):
 def gen_graph_array(data, index_arr):
     output = []  # array of DataFrames
     for i in range(len(index_arr)):
-        sample_frame = pd.DataFrame() 
+        sample_frame = pd.DataFrame()
         for index in index_arr[i]:
-            sample_frame[str(index)] = data.iloc[:,index].values
+            sample_frame[str(list(data)[i+1])] = data.iloc[:,index].values
         if len(sample_frame.columns) > 1:  # If two or more cols have been given,
             sample_frame = sample_frame.mean(axis = 1)  # get the mean
+        name = list(sample_frame)[0]
+        sample_frame = sample_frame.squeeze()
+        sample_frame.rename(name)
         output.append(sample_frame.squeeze())  # Append only series
     return output
 
@@ -100,28 +100,30 @@ def gen_graphs(samples, gene_names):
     control = samples[1].tolist()
     for i in range(2, len(samples)):
         sample = samples[i].tolist()
-        print("s", sample, type(sample), "c", control, type(control))
         graph = go.Scatter(
             x=control,
             y=sample,
             mode='markers',
             text = samples[0])
-        layout = go.Layout(title=("Sample"))
+        layout = go.Layout(
+            title=("Sample " + samples[i].name),
+            xaxis = dict(title="Control"),
+            yaxis = dict(title=samples[i].name)
+        )
         fig = go.Figure(data=[graph], layout=layout)
-        plot_url = plot(fig, filename="Sample.html")
+        plot_url = plot(fig, filename="Sample" + str(i) + ".html")
 
         
 def remove_na_rows(series_arr, gene_names):
     na_frame = pd.DataFrame()
     na_frame["names"] = gene_names
     for i in range(len(series_arr)):
-        na_frame[str(i)] = pd.Series(series_arr[i])
+        na_frame[series_arr[i].name] = pd.Series(series_arr[i])
     na_frame = na_frame.dropna(axis=0, how = "any")
-    print(na_frame)
     output = []
     for i in range(len(na_frame.columns)):
-        output.append(na_frame.iloc[:,i].values)
-    return(output)
+        output.append(na_frame.ix[:,i])
+     return(output)
          
      
 if len(sys.argv) != 2:
