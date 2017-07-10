@@ -1,7 +1,7 @@
 ''' Copyright (c) 2017 Anne-Laure Ehresmann
 Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
 '''
-
+## TODO: Make labels work for mean, figure out bug when receiving more than one sample
 import sys
 import numpy as np
 import pandas as pd
@@ -84,6 +84,8 @@ def gen_graph_array(data, index_arr):
         for index in index_arr[i]:
             sample_frame[str(list(data)[i+1])] = data.iloc[:,index].values
         if len(sample_frame.columns) > 1:  # If two or more cols have been given,
+            print("mean")
+            print(sample_frame)
             sample_frame = sample_frame.mean(axis = 1)  # get the mean
         name = list(sample_frame)[0]
         sample_frame = sample_frame.squeeze()
@@ -95,35 +97,32 @@ def gen_graphs(samples, gene_names):
     if len(samples) < 2:
         print("Something went wrong! E3")
         sys.exit()
-        
     samples = remove_na_rows(samples, gene_names)
-    control = samples[1].tolist()
-    for i in range(2, len(samples)):
-        sample = samples[i].tolist()
+    for samp in samples:
         graph = go.Scatter(
-            x=control,
-            y=sample,
+            x=samp.iloc[:,1].values,
+            y=samp.iloc[:,2].values,
             mode='markers',
-            text = samples[0])
+            text = samp.iloc[:,0].values)
         layout = go.Layout(
-            title=("Sample " + samples[i].name),
-            xaxis = dict(title="Control"),
-            yaxis = dict(title=samples[i].name)
+            title=("Sample " + samp.columns.values[2]),
+            xaxis = dict(title="Control: " + samp.columns.values[1]),
+            yaxis = dict(title=samp.columns.values[2])
         )
         fig = go.Figure(data=[graph], layout=layout)
-        plot_url = plot(fig, filename="Sample" + str(i) + ".html")
+        plot_url = plot(fig, filename="Sample_" + str(samp.columns.values[2]) + ".html")
 
         
 def remove_na_rows(series_arr, gene_names):
-    na_frame = pd.DataFrame()
-    na_frame["names"] = gene_names
-    for i in range(len(series_arr)):
-        na_frame[series_arr[i].name] = pd.Series(series_arr[i])
-    na_frame = na_frame.dropna(axis=0, how = "any")
     output = []
-    for i in range(len(na_frame.columns)):
-        output.append(na_frame.ix[:,i])
-     return(output)
+    for i in range(1, len(series_arr)):
+        na_frame = pd.DataFrame()
+        na_frame["names"] = gene_names
+        na_frame[series_arr[0].name] = series_arr[0]
+        na_frame[series_arr[i].name] = pd.Series(series_arr[i])
+        na_frame = na_frame.dropna(axis=0, how = "any")
+        output.append(na_frame)
+    return(output)
          
      
 if len(sys.argv) != 2:
