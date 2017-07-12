@@ -1,79 +1,39 @@
 '''
 Copyright (c) 2017 Anne-Laure Ehresmann
 Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
-
 '''
+
 import sys
 import pandas as pd
 
 
 def build_samples(data_file):
-    # reads only first row, just to get column quantity.
-    headers = pd.read_csv(data_file, index_col=0, nrows=1)
+    data = pd.read_csv(data_file, skipinitialspace=True)
+    headers = list(data)
     samples = []
-    i = 0
-    while i < len(list(headers)):
-        sample = pd.read_csv(
-            data_file, skipinitialspace=True, usecols=[i, i + 1])
-        sample = sample.dropna()  # removing NaN rows
-        finished = pd.DataFrame([["~~FinishedRow", 0]], columns=list(sample))
-        # Adding this to delimit the end of the column.
-        # Note: obviously, don't name a gene '~~FinishedRow'.
-        sample = sample.append(finished, ignore_index=True)
-        samples.append(sample)
-        i += 2
+    
+    sample = pd.DataFrame()
+    current = 0;
+    next = 1;
+    max = len(data.columns)
+    while next <= max:
+        col = data.iloc[:,current].dropna()  # removing NaN rows at the very end, if columns are not of the same size
+        sample[headers[current]] = col
+        if (next == max) or ("gene_symbol" in headers[next]):
+            samples.append(sample)
+            sample = pd.DataFrame()
+        current += 1
+        next += 1 
     return samples
-
-
-def build_indexes(length):
-    indexes = []
-    for i in range(length):
-        indexes.append(0)
-    return indexes
-
-
-def get_last(samples):
-    # The first visible character in the ASCII table is '!'. This is
-    # to guarantee the variable will be rewritten.
-    max = "!"
-    for sample in samples:
-        sample_max = sample.iloc[-2, 0]
-        if(sample_max > max):
-            max = sample_max
-    return max
-
-
-def process_line(vals, output):
-    newline = []
-    current = "~"  # Same logic as in get_last() but reversed. '~' is
-    # one of the last characters.
-    for i in range(len(samples)):
-        vals[i] = samples[i].iloc[indexes[i], 0]
-        if (vals[i] < current) & (vals[i] != "~~FinishedRow"):
-            current = vals[i]
-    newline.append(current)
-    for i in range(len(samples)):
-        if current == vals[i]:
-            newline.append(samples[i].iloc[indexes[i], 1])
-            if (indexes[i] < len(samples[i]) - 1) & (
-                    vals[i] != "~~FinishedRow"):
-                indexes[i] += 1
-        else:
-            newline.append("NaN")
-    output.loc[len(output)] = newline
-    return current
-
 
 def capitalise(sample):
     samp_series = sample.iloc[:, 0]
-    samp_series = samp_series.str.capitalize()
-    return pd.concat([samp_series, sample.iloc[:, 1]], axis=1)
-
+    samp_series = samp_series.str.upper()
+    return pd.concat([samp_series, sample.iloc[:, 1:len(sample)]], axis=1)
 
 if (len(sys.argv) < 2):
     print("You must give me (at-least / only) one source file. Exiting.")
     sys.exit()
-
 samples = build_samples(sys.argv[1])
 
 if len(sys.argv) < 3 or (sys.argv[2] != 'y'):
@@ -86,24 +46,14 @@ if len(sys.argv) < 3 or (sys.argv[2] != 'y'):
     for i in range(len(samples)):
         samples[i] = samples[i].sort_values([list(samples[i])[0]])
 
-indexes = build_indexes(len(samples))
-vals = build_indexes(len(samples))
-last_gene = get_last(samples)
-headers = []
-headers.append(list(samples[0])[0])  # add first gene name
-# add each log_FC columns' headers
-for i in range(0, len(samples)):
-    headers.append(list(samples[i])[1])
+all = samples[0].copy(deep=True)
+for i in range(1, len(samples)):
+    s = samples[i]
+    if "gene_symbol" in s.columns[0]:
+        cols = s.columns.values
+        cols[0] = "gene_symbol"
+        s.columns = cols
+    all = all.merge(s,how="outer", on="gene_symbol")
+print(all)
+all.to_csv("output.csv", index=False)
 
-# empty dataframe to append to, with column headers built above
-output = pd.DataFrame(columns=headers)
-more = process_line(vals, output)
-count = 0
-print("Computing....")
-while more != last_gene:
-    count += 1
-    more = process_line(vals, output)
-    if(count % 1000 == 0):
-        print("Computed %d rows..." % (count))
-print("Done")
-output.to_csv("output.csv", index=False)
