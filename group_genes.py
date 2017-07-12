@@ -50,6 +50,7 @@ def get_mean_of_dups(sample):
     return sample
 
 all = samples[0].copy(deep=True)
+all = get_mean_of_dups(all)
 for i in range(1, len(samples)):
     s = samples[i]
     if "gene_symbol" in s.columns[0]:
