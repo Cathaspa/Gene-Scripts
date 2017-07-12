@@ -45,6 +45,9 @@ if len(sys.argv) < 3 or (sys.argv[2] != 'y'):
     print("Sorting...")
     for i in range(len(samples)):
         samples[i] = samples[i].sort_values([list(samples[i])[0]])
+def get_mean_of_dups(sample):
+    sample = sample.groupby('gene_symbol').mean().reset_index()
+    return sample
 
 all = samples[0].copy(deep=True)
 for i in range(1, len(samples)):
@@ -53,7 +56,9 @@ for i in range(1, len(samples)):
         cols = s.columns.values
         cols[0] = "gene_symbol"
         s.columns = cols
-    all = all.merge(s,how="outer", on="gene_symbol")
+    s = get_mean_of_dups(s)
+    print(type(s))
+    all = all.merge(s,how="outer", on="gene_symbol",copy=False)
 print(all)
 all.to_csv("output.csv", index=False)
 
