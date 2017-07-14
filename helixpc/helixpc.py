@@ -4,9 +4,9 @@ Licenced under the MIT License (https://en.wikipedia.org/wiki/MIT_License)
 helix.py - the CLI for easy employment of various automisation scripts.
 
 Usage:
-helix.py group <group_input> 
+helix.py group <group_input> [--nonan | -n]
 helix.py graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
-helix.py group <group_input> graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
+helix.py group <group_input> [--nonan | -n] graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
 helix.py (-h | --help)
 
 The control and samples can either be column names, either column indexes.
