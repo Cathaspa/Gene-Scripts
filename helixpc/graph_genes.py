@@ -29,6 +29,23 @@ def verify_inputs(inpt_arr, headers):
     return cols
 
 
+def gen_graph_array(data, index_arr):
+    output = []  # array of DataFrames
+    for i in range(len(index_arr)):
+        sample_frame = pd.DataFrame()
+        for index in index_arr[i]:
+            sample_frame[str(list(data)[index])] = data.iloc[:, index].values
+        name = sample_frame.columns[0]
+        for col in range(1, len(sample_frame.columns)):
+            name = name + ', ' + sample_frame.columns[col]
+        if len(sample_frame.columns) > 1:
+            sample_frame = sample_frame.mean(axis=1)
+        sample_frame = sample_frame.squeeze()
+        sample_frame = sample_frame.rename(name)
+        output.append(sample_frame.squeeze())  # Append only series
+    return output
+
+
 def gen_graphs(samples, gene_names):
     if len(samples) < 2:
         print('Something went wrong! E3')
@@ -63,14 +80,10 @@ def remove_na_rows(series_arr, gene_names):
 
 # master function
 def input(inputfile, scatter, heat, control, samples):
-    print(samples)
     data = pd.read_csv(inputfile, skipinitialspace=True)
     index_arr = []  # array of DataFrames
-    control_arr = verify_inputs(control.split(','), list(data))
-    samples_arr =[]
+    index_arr.append(verify_inputs(control.split(','), list(data)))
     for sample in samples:
-        validsamp = verify_inputs(sample.split(','), list(data))
-        samples_arr.append(validsamp)
-    index_arr = [control_arr, samples_arr]
-    print(index_arr)
-    # gen_graphs(graph_arr, np.array(data.iloc[:, 0].values).tolist())
+        index_arr.append(verify_inputs(sample.split(','), list(data)))
+    graph_arr = gen_graph_array(data, index_arr)
+    gen_graphs(graph_arr, np.array(data.iloc[:, 0].values).tolist())
