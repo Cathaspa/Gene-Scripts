@@ -5,6 +5,13 @@ HelixPC
 A series of scripts for gene database automation. Developed for the
 Philippe Campeau Laboratory.
 
+
+.. image:: http://i.imgur.com/pRZoaiC.png
+  :width: 800px
+  :align: center
+  :alt: alternate text
+
+
 Installation
 ------------
 
@@ -93,7 +100,7 @@ by a comma, and the values used will be the mean of each row for the
 series of columns given.
 
 ``[<sample> ...]``
-nn
+
 indicates that you can give more than one sample, simply separate each
 sample with a space.
 
