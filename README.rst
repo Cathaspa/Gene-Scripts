@@ -15,20 +15,24 @@ Philippe Campeau Laboratory.
 Installation
 ------------
 
-Dependencies
-^^^^^^^^^^^^
-* pandas 
-* numpy 
-* plotly
+helixPC is available on `PyPI
+<https://pypi.python.org/pypi/helixpc>`_, and is easily installable
+through `pip <https://pypi.python.org/pypi/pip>`_. 
+
+For stability, it is recommended that you install this package in a
+`virtual environment <https://pypi.python.org/pypi/virtualenv>`_, but
+you may skip this step if you do not know how to set these up.
+
+::
+
+   $ pip install helixpc
 
 
-Clone the repository, and install the dependencies. Looking into
-`pip <https://pypi.python.org/pypi/pip>`_ will make installing the
-python packages notably easier.
+That's it! You may now call the script with:
 
-Once finished, you can call the script with::
+::
 
-  $ python helixpc.py [options] 
+   $ helixpc
     
 Usage
 -----
@@ -38,7 +42,7 @@ Generating a file for the graphing utility
 
 ::
  
-$ helixpc.py group <group_input> [--nonan]
+$ helixpc group <group_input> [--nonan]
 
 If you do not yet have a valid input file for graph generation, the
 command ``group`` can help you generate one automatically. Simply stick
@@ -67,7 +71,7 @@ Using the graphing utility
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
 
-$ helixpc.py graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
+$ helixpc graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
 
 Once you have a csv file that you want to use for generating graph,
 you may feed it to the graphing utility.  You must give the csv file a
