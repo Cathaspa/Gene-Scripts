@@ -34,8 +34,7 @@ def get_mean_of_dups(sample):
     return sample
 
 # master function
-def input(inputfile, output, nonan, sort):
-    print(output)
+def input(inputfile, output, nonan, sort, round):
     print('Building database structure...')
     samples = build_samples(inputfile)
     if  not sort:
@@ -45,7 +44,6 @@ def input(inputfile, output, nonan, sort):
         print('Sorting...')
         for i in range(len(samples)):
             samples[i] = samples[i].sort_values([list(samples[i])[0]])
-
     all = samples[0].copy(deep=True)
     all = get_mean_of_dups(all)
     for i in range(1, len(samples)):
@@ -60,4 +58,8 @@ def input(inputfile, output, nonan, sort):
     if nonan:
         print('Excluding rows with missing entries...')
         all = all.dropna()
+    if round:
+        print('Rounding...')
+        all = all.round(round)
     all.to_csv((output+'.csv'), index=False)
+    print('Done.')

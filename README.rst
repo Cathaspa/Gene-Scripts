@@ -42,13 +42,27 @@ Generating a file for the graphing utility
 
 ::
  
-$ helixpc group <group_input> [--nonan]
+$ helixpc group <group_input> [--nonan] [--round=[int]]
 
 If you do not yet have a valid input file for graph generation, the
 command ``group`` can help you generate one automatically. Simply stick
 all your batches in a single csv file, call the utility and a file
 named ``output.csv`` will be generated. You can then feed to the
 graphing utility.
+
+Please note that: 
+
+- If certain genes are included multiple times, their
+  mean will be calculated, and only a single entry will appear in 
+  the output.
+ 
+- You may pass ``[--nonan]`` or ``[-n]`` to omit any gene that
+  are missing entries in a batch.
+
+- You may round by passing an integer to ``[--round]`` or
+  ``[-r]``. The integer passed is equivalent to the number of decimal
+  places. For example, passing ``-r=2`` will round all values to the
+  nearest hundredth.
 
 input file format: 
 """"""""""""""""""
@@ -58,14 +72,6 @@ input file format:
 - You *must* call the columns containing gene names ``gene_symbol``, 
   they are used as columns of reference by the scripts.
 
-note that: 
-
-- If certain genes are included multiple times, their
-  mean will be calculated, and only a single entry will appear in 
-  the output.
- 
-- you may pass ``[--nonan]`` or ``[-n]`` to omit any gene that
-  are missing entries in a batch.  
 
 Using the graphing utility
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='helixpc',
-    version='1.0.1',
+    version='1.0.2',
     license='MIT',
     description='Automisation of graph generation for gene FC databases.',
     long_description=open('README.rst').read(),

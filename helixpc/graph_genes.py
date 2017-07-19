@@ -47,12 +47,13 @@ def gen_graph_array(data, index_arr):
 
 
 def gen_graphs(samples, gene_names):
+    print('gl')
     if len(samples) < 2:
         print('Something went wrong! E3')
         sys.exit()
     samples = remove_na_rows(samples, gene_names)
     for samp in samples:
-        graph = go.Scatter(
+        graph = go.Scattergl(
             x=samp.iloc[:, 1].values,
             y=samp.iloc[:, 2].values,
             mode='markers',
@@ -63,7 +64,7 @@ def gen_graphs(samples, gene_names):
             yaxis=dict(title=samp.columns.values[2])
         )
         fig = go.Figure(data=[graph], layout=layout)
-        plot(fig, filename='Sample_' + str(samp.columns.values[2]) + '.html')
+        plot(fig, filename='Sample_' + str(samp.columns.values[2]) + '.html', auto_open=False)
 
 
 def remove_na_rows(series_arr, gene_names):
@@ -80,6 +81,7 @@ def remove_na_rows(series_arr, gene_names):
 
 # master function
 def input(inputfile, scatter, heat, control, samples):
+    print('neat')
     data = pd.read_csv(inputfile, skipinitialspace=True)
     index_arr = []  # array of DataFrames
     index_arr.append(verify_inputs(control.split(','), list(data)))

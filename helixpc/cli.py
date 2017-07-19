@@ -1,7 +1,7 @@
 import argparse
 import sys
 from helixpc import group_genes, graph_genes
-
+# import group_genes, graph_genes  # for development use.
 
 def main():
     parser = argparse.ArgumentParser()
@@ -23,6 +23,9 @@ def main():
     group_parser.add_argument('-y', '--yes', action='store_true',
                               help='specifies if the file is already ' +
                               'capitalised and sorted or not.')
+    group_parser.add_argument('-r','--round', type=int,
+                              help='specifies by how much the values ' +
+                              'should be rounded by.')
 
 
     # graph subcommand
@@ -55,7 +58,7 @@ def main():
             args.scatter = True
         graph_genes.input(args.input, args.scatter, args.heat, args.control, args.samples)
     else:
-        group_genes.input(args.input, args.output, args.nonan, args.yes)
+        group_genes.input(args.input, args.output, args.nonan, args.yes, args.round)
 
 
 main()
