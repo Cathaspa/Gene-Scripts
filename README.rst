@@ -77,7 +77,7 @@ Using the graphing utility
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
 
-$ helixpc graph <graph_input> [--heat] [--scatter] <control> <sample> [<sample> ...]
+$ helixpc graph <graph_input> [--heat] [--scatter] [--alpha] [--pvalues] <control> <sample> [<sample> ...]
 
 Once you have a csv file that you want to use for generating graph,
 you may feed it to the graphing utility.  You must give the csv file a
@@ -94,6 +94,17 @@ name of the gene it is representing.
 ``--heat``
 
 Specifies that you want a heat graph.  Not implemented yet.
+
+``--alpha=x``
+
+Specifies the alpha value. If used, you must also specify a column
+that will serve as the colour value for each gene. See ``--pvalues``.
+
+``--pvalues``
+Once you have specified an alpha, you must specify column(s) whose
+value for each gene will be compared to the alpha value. Everything
+below the alpha value will be colored red. Everything strictly above
+the alpha will be colored black.
 
 ``<control>``
 

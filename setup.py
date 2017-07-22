@@ -1,8 +1,9 @@
 from setuptools import setup
+exec(open('helixpc/_version.py').read())
 
 setup(
     name='helixpc',
-    version='1.0.2',
+    version=__version__,
     license='MIT',
     description='Automisation of graph generation for gene FC databases.',
     long_description=open('README.rst').read(),

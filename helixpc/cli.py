@@ -1,12 +1,18 @@
 import argparse
 import sys
-from helixpc import group_genes, graph_genes
+from helixpc import group_genes, graph_genes, __version__
 # import group_genes, graph_genes  # for development use.
+# __version__ = 'CHANGETHIS'  # for development use.
+
 
 def main():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v','--version', action='version', 
+                        version='%(prog)s ' + __version__)
     subparsers = parser.add_subparsers(title='subcommands - Type \'helix.py' +
-                                       ' [function] -h\' to find out more',
+                                       ' [function] -h\' to find out more. It ' +
+                                       ' is highly recommended that you read '+
+                                       'the README.rst for guidance.',
                                        metavar='', dest='command')
 
     # group subcommand
@@ -38,9 +44,16 @@ def main():
                               help='generates scatter graph(s)')
     graph_parser.add_argument('-he', '--heat', action='store_true',
                               help='generates heat graph(s)')
+    graph_parser.add_argument('-a', '--alpha', type=float,
+                              help='Determines the alpha value for scatter ' +
+                              ' graphs. Everything underneath (including) this ' +
+                              'value will be colored red.')
+    graph_parser.add_argument('-p','--pvalues', help='Lists the column(s) to be ' +
+                              'used for pvalues.')
     graph_parser.add_argument('control', help='specifies the control')
     graph_parser.add_argument('samples', nargs='+', help='specifies the ' +
                               'samples')
+
 
     args = parser.parse_args()
 
@@ -56,7 +69,7 @@ def main():
         if args.heat is not True and args.scatter is not True:
             args.heat = True
             args.scatter = True
-        graph_genes.input(args.input, args.scatter, args.heat, args.control, args.samples)
+        graph_genes.input(args.input, args.scatter, args.heat, args.alpha, args.pvalues, args.control, args.samples)
     else:
         group_genes.input(args.input, args.output, args.nonan, args.yes, args.round)
 
