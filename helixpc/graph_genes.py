@@ -87,28 +87,52 @@ def gen_graphs(samples, gene_names, alpha=None, colour=None):
         for gs in graph_sets:
             coloursets = []
             coloursets.append(gs[gs.iloc[:,3] > alpha])
-            coloursets.append(gs[gs.iloc[:,3] <= alpha])
+            lessthan = gs[gs.iloc[:,3] <= alpha]
+            lessthan = lessthan.sort_values(['colour'])
+            if len(lessthan.index) <= 20:
+                coloursets.append(lessthan)
+            else:
+                coloursets.append(lessthan.iloc[20:,])
+                coloursets.append(lessthan.iloc[0:20,])
             graphs = []
-            for i in range(len(coloursets)):
+            for i in range(3):
                 ds = coloursets[i]
-                if(i == 0):
-                    color = 'rgba(0,0,0,1)'
-                    name = 'Above ' + str(alpha)
+                if i == 0:
+                    graph = go.Scatter(
+                        x=ds.iloc[:, 1].values,
+                        y=ds.iloc[:, 2].values,
+                        mode = 'markers',
+                        name = 'Above ' + str(alpha),
+                        marker = dict(color = 'rgba(0,0,0,1)'),
+                        text=ds.iloc[:, 0].values)
+
+                elif i == 1:
+                    graph = go.Scatter(
+                        x=ds.iloc[:, 1].values,
+                        y=ds.iloc[:, 2].values,
+                        mode = 'markers',
+                        name = 'Below ' + str(alpha),
+                        marker = dict(color = 'rgba(255,0,0,1)'),
+                        text=ds.iloc[:, 0].values)
+
+                elif i == 2:
+                    graph = go.Scatter(
+                        x=ds.iloc[:, 1].values,
+                        y=ds.iloc[:, 2].values,
+                        mode = 'markers+text',
+                        name = 'Below ' + str(alpha) + ', labelled',
+                        marker = dict(color = 'rgba(152,0,0,1)'),
+                        text=ds.iloc[:, 0].values,
+                        textposition='bottom')
                 else:
-                    color = 'rgba(255,0,0,1)'
-                    name = 'Below ' + str(alpha)
-                graph = go.Scattergl(
-                    x=ds.iloc[:, 1].values,
-                    y=ds.iloc[:, 2].values,
-                    mode='markers',
-                    name = name,
-                    marker = dict(color = color),
-                    text=ds.iloc[:, 0].values)
+                    print('Something went wrong!')
+                    sys.exit()
                 graphs.append(graph)
             layout = go.Layout(
                 title=('Sample ' + gs.columns.values[2]),
                 xaxis=dict(title='Control: ' + gs.columns.values[1]),
-                yaxis=dict(title=gs.columns.values[2])
+                yaxis=dict(title=gs.columns.values[2]),
+                showlegend=False
             )
 
             fig = go.Figure(data=graphs, layout=layout)
