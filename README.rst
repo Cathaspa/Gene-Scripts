@@ -83,7 +83,7 @@ Once you have a csv file that you want to use for generating graph,
 you may feed it to the graphing utility.  You must give the csv file a
 series of arguments for it to function properly:
 
-``--scatter``
+``-s | --scatter``
 
 Specifies that you want scatter graph(s).  Scatter graphs are
 generated with a control (always the same) in the x axis, and a sample
@@ -91,43 +91,65 @@ in the y axis. Giving more than one sample will return to you multiple
 graphs, one for each sample. You can hover over each point to see the
 name of the gene it is representing.
 
-``--heat``
+``-he | --heat``
 
 Specifies that you want a heat graph.  Not implemented yet.
 
-``--alpha=x``
-
-Specifies the alpha value. If used, you must also specify a column
-that will serve as the colour value for each gene. See ``--pvalues``.
-
-``--pvalues``
-Once you have specified an alpha, you must specify column(s) whose
-value for each gene will be compared to the alpha value. Everything
-below the alpha value will be colored red. Everything strictly above
-the alpha will be colored black.
-
 ``<control>``
 
-Specifies the control. You may give an index or the name of a
+Specifies the control. You may give the index or the name of a
 column. You may also give a series of indexes/column-names separated
 by a comma, and the values used will be the mean of each row for the
 series of columns given.
 
 ``<sample>``
 
-Specifies the first sample. You may give an index or the name of a
+Specifies the sample. You may give the index or the name of a
 column. You may also give a series of indexes/column-names separated
 by a comma, and the values used will be the mean of each row for the
-series of columns given.
+series of columns given. You may specify many samples, simply put
+a space in between each.
 
-``[<sample> ...]``
+``-a | --alpha``
 
-indicates that you can give more than one sample, simply separate each
-sample with a space.
+Specifies the alpha value. If used, you must also specify a column
+that will serve as the colour value for each gene. See ``--pvalues``.
+
+``-p | --pvalues``
+
+Once you have specified an alpha, you must specify column(s) whose
+value for each gene will be compared to the alpha value. Everything
+below (including) the alpha value will be colored red. Everything strictly above
+the alpha will be colored black.
+
+e.g. : ``helixpc graph output.csv -s -p=X9760.raw -a=5000 2,3 4``
+
+.. image:: https://i.imgur.com/LKUqoP8.png
+  :width: 500px
+  :align: center
+  :alt: alternate text
+
+
+``-l | --label``
+
+Specifies the column to be used for making labels. The ten lowest and
+ten highest values will be labelled on the graph.
+
+e.g. : ``helixpc graph output.csv -s -l=X9760.raw X9753 X9763``
+
+.. image:: https://i.imgur.com/N1tNhiK.png
+  :width: 500px
+  :align: center
+  :alt: alternate text
+
+``-nl | --no-legend``
+
+Specifies whether or not the legend should be displayed.
+
 
 input file format:
 """"""""""""""""""
 
 - Check the example ``graph_input.csv`` The first row should specify
   the column titles.
-- The first col should contain ``gene_symbol`` 
+- The first col should contain ``gene_symbol``
