@@ -55,9 +55,13 @@ def main():
                               'highest values and the 10 with the lowest values.')
     graph_parser.add_argument('-nl', '--no-legend', action='store_false', 
                               help='disables legend display', default=True)
+    graph_parser.add_argument('-nlg', '--no-log', action='store_true', 
+                              help='disables log_2 of all values.', default=False)
+    graph_parser.add_argument('-nd', '--no-diagonal', action='store_true',
+                              help='disables the diagonal blue x=x line going across the graph.', default=False)
     graph_parser.add_argument('control', help='specifies the control')
     graph_parser.add_argument('samples', nargs='+', help='specifies the ' +
-                              'samples')
+                              'samples.')
 
 
 
@@ -75,7 +79,7 @@ def main():
             args.heat = True
             args.scatter = True
         graph_genes.input(args.input, args.scatter, args.heat, args.alpha, args.pvalue, 
-                          args.label, args.no_legend, args.control, args.samples)
+                          args.label, args.no_legend, args.no_log, args.no_diagonal, args.control, args.samples)
     else:
         group_genes.input(args.input, args.output, args.nonan, args.yes, args.round)
 

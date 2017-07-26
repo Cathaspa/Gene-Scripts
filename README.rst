@@ -64,6 +64,9 @@ Please note that:
   places. For example, passing ``-r=2`` will round all values to the
   nearest hundredth.
 
+- You may pass the name of the output file with ``[--output]``. If not
+  used, the output file name will default to ``output.csv``
+
 input file format: 
 """"""""""""""""""
 
@@ -144,8 +147,22 @@ e.g. : ``helixpc graph output.csv -s -l=X9760.raw X9753 X9763``
 
 ``-nl | --no-legend``
 
-Specifies whether or not the legend should be displayed.
+By default, a legend is provided on the right hand side. Since this is
+not very useful for standard, unicolour graphs, you may turn this off
+by passing --no-legend.
 
+``-nlg | --no-log``
+
+By default, the x and y coordinates will use the log_2 of the values
+given. This tends to give clearer graphs, as it reduces their tendency
+to elongate in a very thin shape, whilst still representing an
+accurate distribution. You can turn this off by simply passing
+--no-log.
+
+``-nd | --no-diagonal``
+
+By default, a diagonal x=x line will be drawn on the graph. You may
+turn this off by passing --no-diagonal.
 
 input file format:
 """"""""""""""""""

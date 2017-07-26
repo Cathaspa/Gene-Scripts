@@ -62,21 +62,46 @@ def remove_na_rows(series_arr, gene_names, colour, label):
     return(output)
 
 
-def gen_graphs(samples, gene_names, alpha, colour, label, nolegend):    
+def gen_graphs(samples, gene_names, alpha, colour, label, nolegend, nolog, nodiagonal):  
+  
     if len(samples) < 2:
         print('Something went wrong! E3')
         sys.exit()
-    graph_sets = remove_na_rows(samples, gene_names, colour, label)
+    graph_sets = remove_na_rows(samples, gene_names, colour, label)   
+
     count = 1
     for gs in graph_sets:
+        if not nolog:
+            gs.iloc[:,1] = gs.iloc[:,1].apply(lambda x: np.log2(x))
+            gs.iloc[:,2] = gs.iloc[:,2].apply(lambda x: np.log2(x))
+
+        if not nodiagonal:
+            shapes = [
+                {
+                    'type': 'line',
+                    'opacity': 0.5,
+                    'xref': 'paper',
+                    'yref': 'paper',
+                    'x0': 0,
+                    'y0': 0,
+                    'x1': 1,
+                    'y1': 1,
+                    'line': {
+                        'color': '#1f77b4',
+                        'width': 2,
+                }}]
+        else:
+            shapes = []
+
         print('Sample ' + str(count) + ':')
         count = count + 1
         graphs = []
         print('Computing main graph...')
-        graph = go.Scattergl(
+        graph = go.Scatter(
             x=gs.iloc[:, 1].values,
             y=gs.iloc[:, 2].values,
             mode='markers',
+            name='Sample ' + str(gs.columns.values[2]),
             text=gs.iloc[:, 0].values)
         graphs.append(graph)
 
@@ -89,7 +114,7 @@ def gen_graphs(samples, gene_names, alpha, colour, label, nolegend):
                 x=largest.iloc[:, 1].values,
                 y=largest.iloc[:, 2].values,
                 mode = 'markers+text',
-                name = 'largest',
+                name = 'Largest',
                 marker = dict(color = 'rgba(0,0,152,1)'),
                 text=largest.iloc[:, 0].values,
                 textposition='bottom',
@@ -103,7 +128,7 @@ def gen_graphs(samples, gene_names, alpha, colour, label, nolegend):
                 x=smallest.iloc[:, 1].values,
                 y=smallest.iloc[:, 2].values,
                 mode = 'markers+text',
-                name = 'smallest',
+                name = 'Smallest',
                 marker = dict(color = 'rgba(0,0,152,1)'),
                 text=smallest.iloc[:, 0].values,
                 textposition='bottom',
@@ -142,6 +167,7 @@ def gen_graphs(samples, gene_names, alpha, colour, label, nolegend):
             title=('Sample ' + gs.columns.values[2]),
             xaxis=dict(title='Control: ' + gs.columns.values[1]),
             yaxis=dict(title=gs.columns.values[2]),
+            shapes=shapes,
             showlegend=nolegend
         )
 
@@ -150,7 +176,7 @@ def gen_graphs(samples, gene_names, alpha, colour, label, nolegend):
 
 
 # master function
-def input(inputfile, scatter, heat, alpha, colour, label, nolegend, control, samples):
+def input(inputfile, scatter, heat, alpha, colour, label, nolegend, nolog, nodiagonal, control, samples):
 
     if scatter:
         if bool(alpha) ^ bool(colour):  # if alpha xor colour
@@ -176,9 +202,9 @@ def input(inputfile, scatter, heat, alpha, colour, label, nolegend, control, sam
             label = gen_graph_array(data, [label_arr])[0]
 
 
-        gen_graphs(graph_arr, gene_symbols, alpha, colour, label, nolegend)
+        gen_graphs(graph_arr, gene_symbols, alpha, colour, label, nolegend, nolog, nodiagonal)
         
     if heat:
-        print(' Heat not implemented yet.')
+        print('Heat not implemented yet.')
     print('Done.')
 
