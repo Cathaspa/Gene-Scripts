@@ -1,7 +1,7 @@
 import sys
+import time
 import numpy as np
 import pandas as pd
-# import plotly.plotly as py
 import plotly.graph_objs as go
 from plotly.offline import plot
 
@@ -17,12 +17,12 @@ def verify_inputs(inpt_arr, headers):
                     valid = True
                     break
             if not valid:
-                print('your input \'%s\' was invalid! E0' % (inpt))
+                print('ERROR: your input \'%s\' was invalid! E0' % (inpt))
                 sys.exit()
         elif (int(inpt) > 1) & (int(inpt) <= len(headers)):
                 cols.append(inpt)
         else:
-            print('your input \'%s\' was invalid! E1' % (inpt))
+            print('ERROR: your input \'%s\' was invalid! E1' % (inpt))
             sys.exit()
     for i in range(len(cols)):
         cols[i] = int(cols[i]) - 1
@@ -62,18 +62,22 @@ def remove_na_rows(series_arr, gene_names, colour, label):
     return(output)
 
 
-def gen_graphs(samples, gene_names, alpha, colour, label, nolegend, nolog, nodiagonal):  
+def log2(series):
+    return series.apply(lambda x: np.log2(x))
+
+
+def gen_scatter_graphs(samples, gene_names, alpha, colour, label, nolegend, nolog, nodiagonal):  
   
     if len(samples) < 2:
-        print('Something went wrong! E3')
+        print('ERROR: Something went wrong! E3')
         sys.exit()
     graph_sets = remove_na_rows(samples, gene_names, colour, label)   
 
     count = 1
     for gs in graph_sets:
         if not nolog:
-            gs.iloc[:,1] = gs.iloc[:,1].apply(lambda x: np.log2(x))
-            gs.iloc[:,2] = gs.iloc[:,2].apply(lambda x: np.log2(x))
+            gs.iloc[:,1] = log2(gs.iloc[:,1])
+            gs.iloc[:,2] = log2(gs.iloc[:,2])
 
         if not nodiagonal:
             shapes = [
@@ -172,39 +176,79 @@ def gen_graphs(samples, gene_names, alpha, colour, label, nolegend, nolog, nodia
         )
 
         fig = go.Figure(data=graphs, layout=layout)
-        plot(fig, filename='Sample_' + str(gs.columns.values[2]) + '.html', auto_open=False)
+        plot(fig, filename='sample_' + str(gs.columns.values[2]) + '.html', auto_open=False)
 
 
+def gen_heat_graphs(samples, gene_names, nolog):
+    # samples = list of Series
+    df = pd.concat(samples, axis=1, keys=[s.name for s in samples])
+    df = pd.concat([pd.DataFrame(gene_names), df], axis=1)
+    df = df.dropna(how='any')
+    samples = df.iloc[:,1:]
+    if not nolog:
+        for i in range(len(list(samples))):
+            samples.iloc[:,i] = log2(samples.iloc[:,i])
+        samples = samples.dropna(how='any')
+    gene_names = df.iloc[:,0:1].squeeze()
+    
+    # colorscales
+    max = samples.values.max()
+    min = samples.values.min()
+    if min < 0:
+        min = min * (-1)
+    truemax = max if max > min else min
+    colorscale=[[0.0, 'FF0000'],
+                [0.1, 'FF3333'],
+                [0.2, 'FF6666'],
+                [0.3, 'FF9999'], 
+                [0.4, 'FFCCCC'],
+                [0.5, 'FFFFFF'],
+                [0.6, 'CCCCFF'],
+                [0.7, '9999FF'],
+                [0.8, '6666FF'],
+                [0.9, '3333FF'],
+                [1.0, '0000FF']]
+    print(samples)
+    graph = go.Heatmap(
+        z=samples.values.tolist(), 
+        x=list(samples), 
+        y=gene_names, 
+        colorscale=colorscale, 
+        zmin = truemax * (-1), 
+        zmax = truemax)
+    name = 'heatmap'
+    for s in list(samples):
+        name = name + '_' + str(s)
+    plot([graph], filename = 'ttt.html', auto_open=False)
+    
 # master function
 def input(inputfile, scatter, heat, alpha, colour, label, nolegend, nolog, nodiagonal, control, samples):
+    if bool(alpha) ^ bool(colour):  # if alpha xor colour
+            print('ERROR: When using alpha or colour, you must specify *both* values! Exiting.')
+            sys.exit()
+
+    data = pd.read_csv(inputfile, skipinitialspace=True)
+    index_arr = []
+    index_arr.append(verify_inputs(control.split(','), list(data)))
+    for sample in samples:
+        index_arr.append(verify_inputs(sample.split(','), list(data)))
+
+    graph_arr = gen_graph_array(data, index_arr)
+    gene_symbols = np.array(data.iloc[:, 0].values).tolist()
+
+    # Extra stuff
+    if colour:
+        col_arr = verify_inputs(colour.split(','), list(data))
+        colour = gen_graph_array(data, [col_arr])[0]
+    if label:
+        label_arr = verify_inputs(label.split(','), list(data))
+        label = gen_graph_array(data, [label_arr])[0]
 
     if scatter:
-        if bool(alpha) ^ bool(colour):  # if alpha xor colour
-            print('When using alpha or colour, you must specify *both* values!')
-            system.exit()
-
-        data = pd.read_csv(inputfile, skipinitialspace=True)
-
-        index_arr = []
-        index_arr.append(verify_inputs(control.split(','), list(data)))
-        for sample in samples:
-            index_arr.append(verify_inputs(sample.split(','), list(data)))
-
-        graph_arr = gen_graph_array(data, index_arr)
-        gene_symbols = np.array(data.iloc[:, 0].values).tolist()
-
-        # Extra stuff
-        if colour:
-            col_arr = verify_inputs(colour.split(','), list(data))
-            colour = gen_graph_array(data, [col_arr])[0]
-        if label:
-            label_arr = verify_inputs(label.split(','), list(data))
-            label = gen_graph_array(data, [label_arr])[0]
-
-
-        gen_graphs(graph_arr, gene_symbols, alpha, colour, label, nolegend, nolog, nodiagonal)
-        
+        print('\nGenerating scatter graph(s).')
+        gen_scatter_graphs(graph_arr, gene_symbols, alpha, colour, label, nolegend, nolog, nodiagonal)
     if heat:
-        print('Heat not implemented yet.')
+        print('\nGenerating heat graph.')
+        gen_heat_graphs(graph_arr, gene_symbols, nolog)
     print('Done.')
 

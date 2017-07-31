@@ -6,11 +6,10 @@ A series of scripts for gene database automation. Developed for the
 Philippe Campeau Laboratory.
 
 
-.. image:: http://i.imgur.com/pRZoaiC.png
+.. image:: https://i.imgur.com/ScVxp3j.png
   :width: 800px
   :align: center
-  :alt: alternate text
-
+  :alt: example scatter graph
 
 Installation
 ------------
@@ -59,7 +58,7 @@ Please note that:
 - You may pass ``[--nonan]`` or ``[-n]`` to omit any gene that
   are missing entries in a batch.
 
-- You may round by passing an integer to ``[--round]`` or
+- You may round each values by passing an integer to ``[--round]`` or
   ``[-r]``. The integer passed is equivalent to the number of decimal
   places. For example, passing ``-r=2`` will round all values to the
   nearest hundredth.
@@ -96,7 +95,14 @@ name of the gene it is representing.
 
 ``-he | --heat``
 
-Specifies that you want a heat graph.  Not implemented yet.
+Specifies that you want a heat graph. It will graph both control and
+samples. It accepts ``--no-log`` to prevent taking log_2() of all
+values. All other passed functions are ignored (for now).
+
+.. image:: https://i.imgur.com/bVimCkn.png
+  :width: 500px
+  :align: center
+  :alt: heat graph example
 
 ``<control>``
 
@@ -130,7 +136,7 @@ e.g. : ``helixpc graph output.csv -s -p=X9760.raw -a=5000 2,3 4``
 .. image:: https://i.imgur.com/LKUqoP8.png
   :width: 500px
   :align: center
-  :alt: alternate text
+  :alt: scatter graph with alpha and pvalues
 
 
 ``-l | --label``
@@ -143,7 +149,7 @@ e.g. : ``helixpc graph output.csv -s -l=X9760.raw X9753 X9763``
 .. image:: https://i.imgur.com/N1tNhiK.png
   :width: 500px
   :align: center
-  :alt: alternate text
+  :alt: scatter graph with labelled points with the max/min values
 
 ``-nl | --no-legend``
 

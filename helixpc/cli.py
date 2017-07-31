@@ -72,7 +72,7 @@ def main():
         parser.print_help()
         sys.exit()
     if (args.input is not None and args.input[-4:] != '.csv'):
-        print("Input file must be in the .csv format.")
+        print("ERROR: Input file must be in the .csv format.")
         sys.exit()
     if args.command == 'graph':
         if args.heat is not True and args.scatter is not True:
