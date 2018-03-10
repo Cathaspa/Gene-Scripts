@@ -8,8 +8,8 @@ setup(
     description='Automisation of graph generation for gene FC databases.',
     long_description=open('README.rst').read(),
     author='Anne-Laure Ehresmann',
-    author_email='cathaspa@protonmail.com',
-    url='https://github.com/Cathaspa/HelixPC',
+    author_email='alehresmann@gmail.com',
+    url='https://github.com/Gathaspa/HelixPC',
     packages=['helixpc'],
     entry_points = {
         'console_scripts': ['helixpc=helixpc.cli:main']
