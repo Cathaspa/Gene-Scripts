@@ -6,7 +6,7 @@ A series of scripts for gene database automation. Developed for the
 Philippe Campeau Laboratory.
 
 
-.. image:: https://i.imgur.com/ScVxp3j.png
+.. image:: images/example_scatter_graph.png
   :width: 800px
   :align: center
   :alt: example scatter graph
@@ -99,10 +99,10 @@ Specifies that you want a heat graph. It will graph both control and
 samples. It accepts ``--no-log`` to prevent taking log_2() of all
 values. All other passed functions are ignored (for now).
 
-.. image:: https://i.imgur.com/bVimCkn.png
+.. image:: images/example_heat_map.png
   :width: 500px
   :align: center
-  :alt: heat graph example
+  :alt: example heat map
 
 ``<control>``
 
@@ -133,10 +133,10 @@ the alpha will be colored black.
 
 e.g. : ``helixpc graph output.csv -s -p=X9760.raw -a=5000 2,3 4``
 
-.. image:: https://i.imgur.com/LKUqoP8.png
+.. image:: images/example_scatter_graph_with_alpha_and_pvalues.png
   :width: 500px
   :align: center
-  :alt: scatter graph with alpha and pvalues
+  :alt: example scatter graph with alpha and pvalues
 
 
 ``-l | --label``
@@ -146,10 +146,10 @@ ten highest values will be labelled on the graph.
 
 e.g. : ``helixpc graph output.csv -s -l=X9760.raw X9753 X9763``
 
-.. image:: https://i.imgur.com/N1tNhiK.png
+.. image:: images/example_scatter_graph_with_labelled_points_with_the_max_min_values.png
   :width: 500px
   :align: center
-  :alt: scatter graph with labelled points with the max/min values
+  :alt: example scatter graph with labelled points with the max/min values
 
 ``-nl | --no-legend``
 
