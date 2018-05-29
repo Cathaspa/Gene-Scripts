@@ -7,18 +7,23 @@ from helixpc import group_genes, graph_genes, __version__
 
 def main():
     parser = argparse.ArgumentParser()
+
     parser.add_argument('-v','--version', action='version', 
                         version='%(prog)s ' + __version__)
+
+    # subparsers
     subparsers = parser.add_subparsers(title='subcommands - Type \'helix.py' +
                                        ' [function] -h\' to find out more. It ' +
                                        ' is highly recommended that you read '+
                                        'the README.rst for guidance.',
                                        metavar='', dest='command')
 
+
     # group subcommand
     group_parser = subparsers.add_parser('group', help='Group a series of fold ' +
                                          'change samples into a sing,le file ' +
                                          'with entries for every gene.')
+
     group_parser.add_argument('input', help='input file name')
     group_parser.add_argument('output', nargs='?',
                               help='output file name (optional)',
@@ -63,6 +68,17 @@ def main():
     graph_parser.add_argument('samples', nargs='+', help='specifies the ' +
                               'samples.')
 
+    # peaks subcommand
+    peaks_parser = subparsers.add_parser('peaks', help='Looks at a containing peaks measuring the number of ' +
+                                         'reads. Based on a user-given peak-height-to-distance ratio, ' +
+                                         'determines whether or not two genes are determined "close-enough" ' +
+                                         'and adds a column detailing whether or not peaks are thus classified '
+                                         +'as identical.')
+
+    peaks_parser.add_argument('input', help='input file name')
+    peaks_parser.add_argument('output', nargs='?',
+                              help='output file name (optional)',
+                              default='output')
 
 
     args = parser.parse_args()
@@ -71,17 +87,27 @@ def main():
     if not len(sys.argv) > 1:
         parser.print_help()
         sys.exit()
+    
     if (args.input is not None and args.input[-4:] != '.csv'):
         print("ERROR: Input file must be in the .csv format.")
         sys.exit()
-    if args.command == 'graph':
+    
+    # command parsing
+    if args.command = 'group':
+        group_genes.input(args.input, args.output, args.nonan, args.yes, args.round)
+
+    else if args.command == 'graph':
         if args.heat is not True and args.scatter is not True:
             args.heat = True
             args.scatter = True
         graph_genes.input(args.input, args.scatter, args.heat, args.alpha, args.pvalue, 
                           args.label, args.no_legend, args.no_log, args.no_diagonal, args.control, args.samples)
-    else:
-        group_genes.input(args.input, args.output, args.nonan, args.yes, args.round)
+
+    else if arg.command == 'peaks':
+        measure_peaks.input(args.input, args.output)
+    else
+    print("ERROR: unknown command!")
+ 
 
 
 main()

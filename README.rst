@@ -5,11 +5,14 @@ HelixPC
 A series of scripts for gene database automation. Developed for the
 Philippe Campeau Laboratory.
 
-
 .. image:: images/example_scatter_graph.png
   :width: 800px
   :align: center
   :alt: example scatter graph
+
+
+.. contents::
+
 
 Installation
 ------------
@@ -36,12 +39,12 @@ That's it! You may now call the script with:
 Usage
 -----
 
-Generating a file for the graphing utility
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+``group``: Generating a file for the graphing utility
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ::
  
-$ helixpc group <group_input> [--nonan] [--round=[int]]
+$ helixpc group <group_input> [--nonan] [--round [int]]
 
 If you do not yet have a valid input file for graph generation, the
 command ``group`` can help you generate one automatically. Simply stick
@@ -66,7 +69,7 @@ Please note that:
 - You may pass the name of the output file with ``[--output]``. If not
   used, the output file name will default to ``output.csv``
 
-input file format: 
+input file format
 """"""""""""""""""
 
 - Check the example ``group_input.csv``
@@ -75,15 +78,19 @@ input file format:
   they are used as columns of reference by the scripts.
 
 
-Using the graphing utility
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+``graph``: Using the graphing utility
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ::
 
 $ helixpc graph <graph_input> [--heat] [--scatter] [--alpha] [--pvalues] <control> <sample> [<sample> ...]
 
-Once you have a csv file that you want to use for generating graph,
-you may feed it to the graphing utility.  You must give the csv file a
-series of arguments for it to function properly:
+Used after the grouping utility. Once you have a csv file that you want 
+to use for generating graph, you may feed it to the graphing utility. 
+You must give the csv file a series of arguments for it to function
+properly.
+
+Arguments
+"""""""""
 
 ``-s | --scatter``
 
@@ -97,7 +104,7 @@ name of the gene it is representing.
 
 Specifies that you want a heat graph. It will graph both control and
 samples. It accepts ``--no-log`` to prevent taking log_2() of all
-values. All other passed functions are ignored (for now).
+values.
 
 .. image:: images/example_heat_map.png
   :width: 500px
@@ -121,12 +128,12 @@ a space in between each.
 
 ``-a | --alpha``
 
-Specifies the alpha value. If used, you must also specify a column
-that will serve as the colour value for each gene. See ``--pvalues``.
+Specifies the alpha value. If used, you must specify an int that will
+serve as the cutoff value for colorisation. See ``--pvalues``.
 
 ``-p | --pvalues``
 
-Once you have specified an alpha, you must specify column(s) whose
+Once you have specified an alpha value, you must specify column(s) whose
 value for each gene will be compared to the alpha value. Everything
 below (including) the alpha value will be colored red. Everything strictly above
 the alpha will be colored black.
@@ -170,9 +177,27 @@ accurate distribution. You can turn this off by simply passing
 By default, a diagonal x=x line will be drawn on the graph. You may
 turn this off by passing --no-diagonal.
 
-input file format:
+input file format
 """"""""""""""""""
 
 - Check the example ``graph_input.csv`` The first row should specify
   the column titles.
 - The first col should contain ``gene_symbol``
+
+
+
+``peaks``: Comparing peaks and distance by ratio
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+::
+
+$ helixpc peaks <peaks_input> [--percentage [int]]
+
+
+UNDER CONSTRUCTION, currently not available
+
+One may sometimes want to verify how closely related read peaks are,
+depending on their distance and height. You can thus give a BAM file
+which will be used to determine whether two peaks are closely enough
+related to be categorised as the same peak.
+
+
